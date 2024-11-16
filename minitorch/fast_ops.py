@@ -7,7 +7,6 @@ from numba import prange
 from numba import njit as _njit
 
 from .tensor_data import (
-    MAX_DIMS,
     broadcast_index,
     index_to_position,
     shape_broadcast,
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
     from typing import Callable, Optional
 
     from .tensor import Tensor
-    from .tensor_data import Shape, Storage, Strides
+    from .tensor_data import Index, Shape, Storage, Strides
 
 # TIP: Use `NUMBA_DISABLE_JIT=1 pytest tests/ -m task3_1` to run these tests without JIT.
 
@@ -169,17 +168,16 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 3.1.
-        out_size = len(out)
 
         stride_aligned = np.array_equal(out_shape, in_shape) and np.array_equal(
             out_strides, in_strides
         )
 
         if stride_aligned:
-            for i in prange(out_size):
+            for i in prange(out.size):
                 out[i] = fn(in_storage[i])
         else:
-            for i in prange(out_size):
+            for i in prange(out.size):
                 in_index = np.zeros(len(in_shape), dtype=np.int32)
                 out_index = np.zeros(len(out_shape), dtype=np.int32)
                 to_index(i, out_shape, out_index)
@@ -226,8 +224,6 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 3.1.
-        out_size = len(out)
-
         stride_aligned = (
             np.array_equal(out_shape, a_shape)
             and np.array_equal(out_shape, b_shape)
@@ -236,10 +232,10 @@ def tensor_zip(
         )
 
         if stride_aligned:
-            for i in prange(out_size):
+            for i in prange(out.size):
                 out[i] = fn(a_storage[i], b_storage[i])
         else:
-            for i in prange(out_size):
+            for i in prange(out.size):
                 a_index = np.zeros(len(a_shape), dtype=np.int32)
                 b_index = np.zeros(len(b_shape), dtype=np.int32)
                 out_index = np.zeros(len(out_shape), dtype=np.int32)
@@ -287,13 +283,15 @@ def tensor_reduce(
         # TODO: Implement for Task 3.1.
         reduce_size = a_shape[reduce_dim]
         for i in prange(len(out)):
-            out_index = np.zeros(MAX_DIMS, dtype=np.int32)
+            out_index = np.zeros(len(out_shape), dtype=np.int32)
             to_index(i, out_shape, out_index)
             o = index_to_position(out_index, out_strides)
+            acc = out[o]  # Use accumulator variable
             for s in range(reduce_size):
                 out_index[reduce_dim] = s
                 j = index_to_position(out_index, a_strides)
-                out[o] = fn(out[o], a_storage[j])
+                acc = fn(acc, a_storage[j])
+            out[o] = acc
 
     return njit(_reduce, parallel=True)  # type: ignore
 

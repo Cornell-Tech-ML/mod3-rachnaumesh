@@ -192,7 +192,7 @@ def relu(a: float) -> float:
         float: The ReLU of the input value.
 
     """
-    return max(0, a)
+    return a if a > 0 else 0
 
 
 def log(a: float) -> float:
