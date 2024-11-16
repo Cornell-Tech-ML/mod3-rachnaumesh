@@ -338,10 +338,10 @@ class Tensor:
         return Neg.apply(self)
 
     def __radd__(self, b: TensorLike) -> Tensor:
-        return Add.apply(self._ensure_tensor(b), self)
+        return self + b
 
     def __rmul__(self, b: TensorLike) -> Tensor:
-        return Mul.apply(self._ensure_tensor(b), self)
+        return self * b
 
     def all(self, dim: Optional[int] = None) -> Tensor:
         """All elements are true"""
@@ -350,9 +350,9 @@ class Tensor:
         else:
             return All.apply(self, self._ensure_tensor(dim))
 
-    def is_close(self, b: TensorLike) -> Tensor:
+    def is_close(self, b: Tensor) -> Tensor:
         """Elementwise close"""
-        return IsClose.apply(self, self._ensure_tensor(b))
+        return IsClose.apply(self, b)
 
     def sigmoid(self) -> Tensor:
         """Elementwise sigmoid function."""

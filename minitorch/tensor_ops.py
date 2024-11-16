@@ -7,6 +7,7 @@ import numpy as np
 
 from . import operators
 from .tensor_data import (
+    MAX_DIMS,
     shape_broadcast,
     index_to_position,
     to_index,
@@ -373,25 +374,15 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        for out_index in range(len(out)):
-            out_multi_index = np.zeros(len(out_shape), dtype=np.int32)
-            to_index(out_index, out_shape, out_multi_index)
-
-            reduction_result = 0.0
-            first = True
-
-            for i in range(a_shape[reduce_dim]):
-                a_multi_index = out_multi_index.copy()
-                a_multi_index[reduce_dim] = i
-                a_pos = index_to_position(a_multi_index, a_strides)
-
-                if first:
-                    reduction_result = a_storage[a_pos]
-                    first = False
-                else:
-                    reduction_result = fn(reduction_result, a_storage[a_pos])
-
-            out[out_index] = reduction_result
+        out_index = np.zeros(MAX_DIMS, np.int32)
+        reduce_size = a_shape[reduce_dim]
+        for i in range(len(out)):
+            to_index(i, out_shape, out_index)
+            o = index_to_position(out_index, out_strides)
+            for s in range(reduce_size):
+                out_index[reduce_dim] = s
+                j = index_to_position(out_index, a_strides)
+                out[o] = fn(out[o], a_storage[j])
 
     return _reduce
 

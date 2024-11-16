@@ -181,7 +181,7 @@ def tensor_map(
         broadcast_index(out_index, out_shape, in_shape, in_index)
         in_position = index_to_position(in_index, in_strides)
         out_position = index_to_position(out_index, out_strides)
-        out[out_position] = fn(numba.float64(in_storage[in_position]))
+        out[out_position] = fn(in_storage[in_position])
 
     return cuda.jit()(_map)  # type: ignore
 

@@ -140,11 +140,8 @@ class Sigmoid(Function):
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
         """Compute the gradient of the sigmoid function"""
-        (s,) = ctx.saved_values
-        return grad_output.f.mul_zip(
-            s.f.mul_zip(s, 1 + s.f.neg_map(s)),
-            grad_output,
-        )
+        (sigma,) = ctx.saved_values
+        return sigma * (-sigma + 1.0) * grad_output
 
 
 class ReLU(Function):
@@ -241,24 +238,20 @@ class IsClose(Function):
         """Elementwise is-close comparison"""
         return t1.f.is_close_zip(t1, t2)
 
-
-class Permute(Function):
+    
+class Permute( Function) :
     @staticmethod
     def forward(ctx: Context, a: Tensor, order: Tensor) -> Tensor:
         """Permute the dimensions of the tensor."""
-        int_order = [int(i) for i in order._tensor._storage]
-        ctx.save_for_backward(int_order)
-        new_tensor_data = a._tensor.permute(*int_order)
-        return a._new(new_tensor_data)
+        ctx.save_for_backward(order)
+        return a._new(a._tensor.permute(*[int(order[i]) for i in range(order.size)]))
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
-        """Permute gradients back to original order."""
-        (order,) = ctx.saved_values
-        # inverse_order = [order.index(i) for i in range(len(order))]
-        order_map = {v: i for i, v in enumerate(order)}
-        orig_order = [order_map[i] for i in range(len(order))]
-        return grad_output._new(grad_output._tensor.permute(*orig_order)), 0.0
+        """PCompute the gradient of the permutation."""
+        order : Tensor = ctx.saved_values[0]
+        order2 : List[int] = [a[0] for a in sorted(enumerate([order[i] for i in range(order.size)]), key=lambda a: a[1])]
+        return grad_output._new(grad_output._tensor.permute(*order2)), 0.0
 
 
 class View(Function):
