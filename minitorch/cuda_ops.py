@@ -145,7 +145,7 @@ class CudaOps(TensorOps):
 
 def tensor_map(
     fn: Callable[[float], float],
-) -> Callable[[Storage, Shape, Strides, Storage, Shape, Strides], None]:
+) -> Callable[[Storage, Shape, Strides, int, Storage, Shape, Strides], None]:
     """CUDA higher-order tensor map function. ::
 
       fn_map = tensor_map(fn)
@@ -189,7 +189,7 @@ def tensor_map(
 def tensor_zip(
     fn: Callable[[float, float], float],
 ) -> Callable[
-    [Storage, Shape, Strides, Storage, Shape, Strides, Storage, Shape, Strides], None
+    [Storage, Shape, Strides, int, Storage, Shape, Strides, Storage, Shape, Strides], None
 ]:
     """CUDA higher-order tensor zipWith (or map2) function ::
 
@@ -308,7 +308,7 @@ def sum_practice(a: Tensor) -> TensorData:
 
 def tensor_reduce(
     fn: Callable[[float, float], float],
-) -> Callable[[Storage, Shape, Strides, Storage, Shape, Strides, int], None]:
+) -> Callable[[Storage, Shape, Strides, int, Storage, Shape, Strides, int, float], None]:
     """CUDA higher-order tensor reduce function.
 
     Args:
