@@ -320,7 +320,7 @@ class Tensor:
         return Add.apply(self, self._ensure_tensor(b))
 
     def __sub__(self, b: TensorLike) -> Tensor:
-        return Add.apply(self, Neg.apply(self._ensure_tensor(b)))
+        return Add.apply(self, -self._ensure_tensor(b))
 
     def __mul__(self, b: TensorLike) -> Tensor:
         return Mul.apply(self, self._ensure_tensor(b))
