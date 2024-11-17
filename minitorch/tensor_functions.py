@@ -238,8 +238,8 @@ class IsClose(Function):
         """Elementwise is-close comparison"""
         return t1.f.is_close_zip(t1, t2)
 
-    
-class Permute( Function) :
+
+class Permute(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, order: Tensor) -> Tensor:
         """Permute the dimensions of the tensor."""
@@ -249,8 +249,13 @@ class Permute( Function) :
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
         """PCompute the gradient of the permutation."""
-        order : Tensor = ctx.saved_values[0]
-        order2 : List[int] = [a[0] for a in sorted(enumerate([order[i] for i in range(order.size)]), key=lambda a: a[1])]
+        order: Tensor = ctx.saved_values[0]
+        order2: List[int] = [
+            a[0]
+            for a in sorted(
+                enumerate([order[i] for i in range(order.size)]), key=lambda a: a[1]
+            )
+        ]
         return grad_output._new(grad_output._tensor.permute(*order2)), 0.0
 
 

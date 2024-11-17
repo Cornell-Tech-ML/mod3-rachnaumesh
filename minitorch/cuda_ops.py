@@ -284,7 +284,8 @@ def tensor_map(
 def tensor_zip(
     fn: Callable[[float, float], float],
 ) -> Callable[
-    [Storage, Shape, Strides, int, Storage, Shape, Strides, Storage, Shape, Strides], None
+    [Storage, Shape, Strides, int, Storage, Shape, Strides, Storage, Shape, Strides],
+    None,
 ]:
     """CUDA higher-order tensor zipWith (or map2) function ::
 
@@ -321,7 +322,7 @@ def tensor_zip(
         # TODO: Implement for Task 3.3.
         if i >= out_size:
             return
-        
+
         to_index(i, out_shape, out_strides, out_index)
         broadcast_index(out_index, out_shape, a_shape, a_index)
         broadcast_index(out_index, out_shape, b_shape, b_index)
@@ -403,7 +404,9 @@ def sum_practice(a: Tensor) -> TensorData:
 
 def tensor_reduce(
     fn: Callable[[float, float], float],
-) -> Callable[[Storage, Shape, Strides, int, Storage, Shape, Strides, int, float], None]:
+) -> Callable[
+    [Storage, Shape, Strides, int, Storage, Shape, Strides, int, float], None
+]:
     """CUDA higher-order tensor reduce function.
 
     Args:
@@ -440,7 +443,7 @@ def tensor_reduce(
 
         cache[pos] = reduce_value
 
-        to_index(out_pos, out_shape, out_index)  
+        to_index(out_pos, out_shape, out_index)
 
         for dim in range(len(out_shape)):
             a_index[dim] = out_index[dim]
@@ -463,9 +466,6 @@ def tensor_reduce(
         if pos == 0:
             out_pos = index_to_position(out_index, out_strides)
             out[out_pos] = cache[0]
-
-
-
 
     return jit(_reduce)  # type: ignore
 
@@ -537,6 +537,7 @@ def _mm_practice(out: Storage, a: Storage, b: Storage, size: int) -> None:
     if i < size and j < size:
         out[i * size + j] = temp
 
+
 jit_mm_practice = jit(_mm_practice)
 
 
@@ -604,7 +605,58 @@ def _tensor_matrix_multiply(
     #    b) Copy into shared memory for b matrix
     #    c) Compute the dot produce for position c[i, j]
     # TODO: Implement for Task 3.4.
-    raise NotImplementedError("Need to implement for Task 3.4")
+
+    # Code for matrix multiplication
+    acc = 0.0
+
+    # Loop over the sub-matrices
+    for k_block in range((a_shape[-1] + BLOCK_DIM - 1) // BLOCK_DIM):
+        # Load data into shared memory
+        k = k_block * BLOCK_DIM + pj
+
+        # Load matrix a
+        if i < a_shape[-2] and k < a_shape[-1]:
+            a_idx = (
+                batch * a_batch_stride  # batch dimension
+                + i * a_strides[-2]  # row dimension
+                + k * a_strides[-1]  # column dimension
+            )
+            a_shared[pi, pj] = a_storage[a_idx]
+        else:
+            a_shared[pi, pj] = 0.0
+
+        # Load matrix b
+        k = k_block * BLOCK_DIM + pi
+        if k < b_shape[-2] and j < b_shape[-1]:
+            b_idx = (
+                batch * b_batch_stride  # batch dimension
+                + k * b_strides[-2]  # row dimension
+                + j * b_strides[-1]  # column dimension
+            )
+            b_shared[pi, pj] = b_storage[b_idx]
+        else:
+            b_shared[pi, pj] = 0.0
+
+        # Synchronize threads
+        cuda.syncthreads()
+
+        # Compute partial dot product
+        if i < out_shape[-2] and j < out_shape[-1]:
+            for k in range(BLOCK_DIM):
+                if k_block * BLOCK_DIM + k < a_shape[-1]:
+                    acc += a_shared[pi, k] * b_shared[k, pj]
+
+        # Synchronize before loading next sub-matrix
+        cuda.syncthreads()
+
+    # Write the result
+    if i < out_shape[-2] and j < out_shape[-1]:
+        out_idx = (
+            batch * out_strides[0]  # batch dimension
+            + i * out_strides[-2]  # row dimension
+            + j * out_strides[-1]  # column dimension
+        )
+        out[out_idx] = acc
 
 
 tensor_matrix_multiply = jit(_tensor_matrix_multiply)
