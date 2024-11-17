@@ -3,6 +3,8 @@ import numba
 import minitorch
 import time
 
+from numpy import average
+
 datasets = minitorch.datasets
 FastTensorBackend = minitorch.TensorBackend(minitorch.FastOps)
 if numba.cuda.is_available():
@@ -65,6 +67,7 @@ class FastTrain:
         optim = minitorch.SGD(self.model.parameters(), learning_rate)
         BATCH = 10
         losses = []
+        epoch_times = []
 
         for epoch in range(max_epochs):
             start_time = time.time()
@@ -92,6 +95,7 @@ class FastTrain:
             losses.append(total_loss)
             end_time = time.time()
             epoch_time = end_time - start_time
+            epoch_times.append(epoch_time)
             # Logging
             if epoch % 10 == 0 or epoch == max_epochs:
                 X = minitorch.tensor(data.X, backend=self.backend)
@@ -101,6 +105,9 @@ class FastTrain:
                 correct = int(((out.detach() > 0.5) == y2).sum()[0])
                 log_fn(epoch, total_loss, correct, losses)
                 print(f"Time for epoch {epoch}: {epoch_time:.4f}s")
+
+        average_epoch_time = sum(epoch_times) / len(epoch_times)
+        print(f"Average epoch time: {average_epoch_time:.4f}s")
 
 
 
