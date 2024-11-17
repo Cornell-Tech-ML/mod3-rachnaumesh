@@ -30,7 +30,13 @@ class Network(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 3.5.
-        raise NotImplementedError("Need to implement for Task 3.5")
+        # Pass through the first layer and apply ReLU activation
+        x = self.layer1(x).relu()
+        # Pass through the second layer and apply ReLU activation
+        x = self.layer2(x).relu()
+        # Pass through the third layer (output layer)
+        x = self.layer3(x)
+        return x
 
 
 class Linear(minitorch.Module):
@@ -44,8 +50,7 @@ class Linear(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 3.5.
-        raise NotImplementedError("Need to implement for Task 3.5")
-
+        return x @ self.weights.value + self.bias.value
 
 class FastTrain:
     def __init__(self, hidden_layers, backend=FastTensorBackend):
