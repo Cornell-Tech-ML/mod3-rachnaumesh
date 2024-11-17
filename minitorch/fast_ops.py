@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from typing import Callable, Optional
 
     from .tensor import Tensor
-    from .tensor_data import Index, Shape, Storage, Strides
+    from .tensor_data import Shape, Storage, Strides
 
 # TIP: Use `NUMBA_DISABLE_JIT=1 pytest tests/ -m task3_1` to run these tests without JIT.
 
@@ -29,6 +29,22 @@ Fn = TypeVar("Fn")
 
 
 def njit(fn: Fn, **kwargs: Any) -> Fn:
+    """Wrapper function to enable Numba's just-in-time (JIT) compilation with inlining.
+
+    This function applies Numba's `njit` decorator to the provided function `fn` with
+    the `inline="always"` argument, ensuring that the function is always inlined. Additional
+    keyword arguments can be passed to customize the JIT compilation.
+
+    Args:
+    ----
+        fn (Fn): The function to be JIT-compiled.
+        **kwargs (Any): Additional keyword arguments to pass to the `_njit` function.
+
+    Returns:
+    -------
+        Fn: The JIT-compiled version of the input function.
+
+    """
     return _njit(inline="always", **kwargs)(fn)  # type: ignore
 
 

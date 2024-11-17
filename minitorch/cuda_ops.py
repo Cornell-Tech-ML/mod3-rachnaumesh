@@ -29,11 +29,44 @@ FakeCUDAKernel = Any
 Fn = TypeVar("Fn")
 
 
-def device_jit(fn: Fn, **kwargs) -> Fn:
+def device_jit(fn: Fn, **kwargs: Any) -> Fn:
+    """Wrapper function to enable JIT compilation for device-level CUDA kernels.
+
+    This function applies just-in-time (JIT) compilation to the provided function `fn`
+    with the `device=True` argument, which signifies that the function is to be used
+    as a device function in CUDA programming. Device functions are executed on a per-thread
+    basis and are not callable from the host.
+
+    Args:
+    ----
+        fn (Fn): The function to be JIT-compiled for device execution.
+        **kwargs: Additional keyword arguments to pass to the `_jit` function.
+
+    Returns:
+    -------
+        Fn: The JIT-compiled version of the input function.
+
+    """
     return _jit(device=True, **kwargs)(fn)  # type: ignore
 
 
-def jit(fn, **kwargs) -> FakeCUDAKernel:
+def jit(fn: Fn, **kwargs: Any) -> FakeCUDAKernel:
+    """Wrapper function to enable JIT compilation for general CUDA kernels.
+
+    This function applies just-in-time (JIT) compilation to the provided function `fn`
+    without specifying the `device=True` argument. It is typically used for host-callable
+    CUDA kernels that manage GPU threads, blocks, and grid computations.
+
+    Args:
+    ----
+        fn : The function to be JIT-compiled.
+        **kwargs: Additional keyword arguments to pass to the `_jit` function.
+
+    Returns:
+    -------
+        FakeCUDAKernel: The JIT-compiled version of the input function as a callable CUDA kernel.
+
+    """
     return _jit(**kwargs)(fn)  # type: ignore
 
 
@@ -49,7 +82,21 @@ class CudaOps(TensorOps):
 
     @staticmethod
     def map(fn: Callable[[float], float]) -> MapProto:
-        """See `tensor_ops.py`"""
+        """Applies a function element-wise to a tensor using CUDA.
+
+        This method compiles the provided function `fn` to run on the GPU and applies it
+        element-wise to the input tensor `a`. The result is stored in the output tensor `out`.
+
+        Args:
+        ----
+            fn (Callable[[float], float]): The function to apply element-wise to the tensor.
+
+        Returns:
+        -------
+            MapProto: A function that takes a tensor `a` and an optional output tensor `out`,
+                      applies `fn` element-wise, and returns the result.
+
+        """
         cufn: Callable[[float], float] = device_jit(fn)
         f = tensor_map(cufn)
 
@@ -67,6 +114,21 @@ class CudaOps(TensorOps):
 
     @staticmethod
     def zip(fn: Callable[[float, float], float]) -> Callable[[Tensor, Tensor], Tensor]:
+        """Applies a function element-wise to two tensors using CUDA.
+
+        This method compiles the provided function `fn` to run on the GPU and applies it
+        element-wise to the input tensors `a` and `b`. The result is stored in the output tensor `out`.
+
+        Args:
+        ----
+            fn (Callable[[float, float], float]): The function to apply element-wise to the tensors.
+
+        Returns:
+        -------
+            Callable[[Tensor, Tensor], Tensor]: A function that takes two tensors `a` and `b`,
+                                                applies `fn` element-wise, and returns the result.
+
+        """
         cufn: Callable[[float, float], float] = device_jit(fn)
         f = tensor_zip(cufn)
 
@@ -86,6 +148,23 @@ class CudaOps(TensorOps):
     def reduce(
         fn: Callable[[float, float], float], start: float = 0.0
     ) -> Callable[[Tensor, int], Tensor]:
+        """Reduces a tensor along a specified dimension using CUDA.
+
+        This method compiles the provided reduction function `fn` to run on the GPU and applies it
+        to reduce the input tensor `a` along the specified dimension `dim`. The result is stored
+        in the output tensor `out_a`.
+
+        Args:
+        ----
+            fn (Callable[[float, float], float]): The reduction function to apply.
+            start (float): The initial value for the reduction.
+
+        Returns:
+        -------
+            Callable[[Tensor, int], Tensor]: A function that takes a tensor `a` and a dimension `dim`,
+            applies the reduction function `fn` along `dim`, and returns the result.
+
+        """
         cufn: Callable[[float, float], float] = device_jit(fn)
         f = tensor_reduce(cufn)
 
@@ -106,6 +185,22 @@ class CudaOps(TensorOps):
 
     @staticmethod
     def matrix_multiply(a: Tensor, b: Tensor) -> Tensor:
+        """Multiplies two matrices using CUDA.
+
+        This method performs matrix multiplication on the GPU. It ensures that the input tensors `a`
+        and `b` are treated as 3-dimensional tensors for batch processing, performs the multiplication,
+        and then returns the result.
+
+        Args:
+        ----
+            a (Tensor): The first input tensor.
+            b (Tensor): The second input tensor.
+
+        Returns:
+        -------
+            Tensor: The result of the matrix multiplication.
+
+        """
         # Make these always be a 3 dimensional multiply
         both_2d = 0
         if len(a.shape) == 2:
