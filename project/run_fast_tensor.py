@@ -1,8 +1,7 @@
 import random
-
 import numba
-
 import minitorch
+import time
 
 datasets = minitorch.datasets
 FastTensorBackend = minitorch.TensorBackend(minitorch.FastOps)
@@ -30,12 +29,9 @@ class Network(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 3.5.
-        # Pass through the first layer and apply ReLU activation
         x = self.layer1(x).relu()
-        # Pass through the second layer and apply ReLU activation
         x = self.layer2(x).relu()
-        # Pass through the third layer (output layer)
-        x = self.layer3(x)
+        x = self.layer3(x).sigmoid()
         return x
 
 
@@ -50,7 +46,7 @@ class Linear(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 3.5.
-        return x @ self.weights.value + self.bias.value
+        return (x @ self.weights.value) + self.bias.value
 
 class FastTrain:
     def __init__(self, hidden_layers, backend=FastTensorBackend):
@@ -71,6 +67,7 @@ class FastTrain:
         losses = []
 
         for epoch in range(max_epochs):
+            start_time = time.time()
             total_loss = 0.0
             c = list(zip(data.X, data.y))
             random.shuffle(c)
@@ -93,6 +90,8 @@ class FastTrain:
                 optim.step()
 
             losses.append(total_loss)
+            end_time = time.time()
+            epoch_time = end_time - start_time
             # Logging
             if epoch % 10 == 0 or epoch == max_epochs:
                 X = minitorch.tensor(data.X, backend=self.backend)
@@ -100,7 +99,7 @@ class FastTrain:
                 out = self.model.forward(X).view(y.shape[0])
                 y2 = minitorch.tensor(data.y)
                 correct = int(((out.detach() > 0.5) == y2).sum()[0])
-                log_fn(epoch, total_loss, correct, losses)
+                log_fn(epoch, total_loss, correct, losses, epoch_time)
 
 
 if __name__ == "__main__":
