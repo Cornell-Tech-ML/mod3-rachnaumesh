@@ -31,7 +31,7 @@ class Network(minitorch.Module):
         # TODO: Implement for Task 3.5.
         x = self.layer1(x).relu()
         x = self.layer2(x).relu()
-        x = self.layer3(x).sigmoid()
+        x = self.layer3(x)
         return x
 
 
