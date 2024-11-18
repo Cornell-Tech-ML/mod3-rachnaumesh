@@ -734,3 +734,120 @@ Average epoch time: 1.2029s
 
 # Training logs and Epoch time for Large Model
 
+Simple Model with 500 hidden size 
+
+```bash
+PYTHONPATH='/content/$DIR'
+!python3.12 project/run_fast_tensor.py --BACKEND cpu --HIDDEN 500 --DATASET simple --RATE 0.05
+```
+
+## CPU output:
+```
+Epoch  0  loss  18.018813244715258 correct 45
+Epoch  10  loss  1.4407767301481909 correct 48
+Epoch  20  loss  0.10197095951991919 correct 47
+Epoch  30  loss  0.03198936971441677 correct 48
+Epoch  40  loss  0.07908132157477962 correct 48
+Epoch  50  loss  1.1066960086719049 correct 48
+Epoch  60  loss  0.00855393247488822 correct 48
+Epoch  70  loss  3.236008695684685e-05 correct 50
+Epoch  80  loss  0.030454534381947663 correct 48
+Epoch  90  loss  1.5317802851139457 correct 48
+Epoch  100  loss  8.106058580146704e-05 correct 48
+Epoch  110  loss  0.10940974813654583 correct 49
+Epoch  120  loss  0.03317980498769379 correct 47
+Epoch  130  loss  0.0852078539148857 correct 48
+Epoch  140  loss  0.14224246967010598 correct 50
+Epoch  150  loss  8.981029612618874e-05 correct 48
+Epoch  160  loss  2.813153030311847 correct 47
+Epoch  170  loss  0.01833190642873016 correct 49
+Epoch  180  loss  0.0006756923768855193 correct 47
+Epoch  190  loss  2.34206313262967e-05 correct 49
+Epoch  200  loss  0.4098148630263007 correct 50
+Epoch  210  loss  0.0009134811846579723 correct 50
+Epoch  220  loss  1.262596101063761 correct 49
+Epoch  230  loss  0.0005511014492973443 correct 49
+Epoch  240  loss  0.0004748989861495016 correct 50
+Epoch  250  loss  1.7122804895865151 correct 50
+Epoch  260  loss  0.7730297671158951 correct 50
+Epoch  270  loss  1.7017698240116885 correct 48
+Epoch  280  loss  7.67604430150697e-05 correct 48
+Epoch  290  loss  0.00015720861462211567 correct 49
+Epoch  300  loss  0.8056369870740894 correct 49
+Epoch  310  loss  0.10279552482644214 correct 49
+Epoch  320  loss  0.01556637997951324 correct 50
+Epoch  330  loss  0.002527094185062111 correct 49
+Epoch  340  loss  1.2591259405871478 correct 49
+Epoch  350  loss  0.015929144578272967 correct 49
+Epoch  360  loss  1.0037090312829283e-05 correct 50
+Epoch  370  loss  0.012980926773377616 correct 48
+Epoch  380  loss  1.4393521134656873 correct 49
+Epoch  390  loss  0.0026635601466635005 correct 49
+Epoch  400  loss  1.0113775349418013 correct 49
+Epoch  410  loss  0.9404050353682976 correct 49
+Epoch  420  loss  0.003565233999630641 correct 49
+Epoch  430  loss  4.8786595690565394e-05 correct 50
+Epoch  440  loss  0.10198509558967381 correct 49
+Epoch  450  loss  0.4486131365762257 correct 50
+Epoch  460  loss  1.695096763775839e-05 correct 49
+Epoch  470  loss  1.4488161722668076 correct 49
+Epoch  480  loss  0.00022395072171274726 correct 49
+Epoch  490  loss  0.01064588992768443 correct 50
+Average epoch time: 1.0527s
+```
+
+## GPU output:
+```
+Epoch  0  loss  12.434595203892872 correct 49
+Epoch  10  loss  0.16716457040994884 correct 50
+Epoch  20  loss  0.5097334128210291 correct 50
+Epoch  30  loss  0.25608493487570855 correct 50
+Epoch  40  loss  0.014890785819805966 correct 50
+Epoch  50  loss  0.0005454371779703797 correct 50
+Epoch  60  loss  0.02148426823776925 correct 50
+Epoch  70  loss  0.010595965788121886 correct 50
+Epoch  80  loss  0.138397081648725 correct 50
+Epoch  90  loss  0.015941497067279542 correct 50
+Epoch  100  loss  0.00030403173639929394 correct 50
+Epoch  110  loss  0.03556956012216768 correct 50
+Epoch  120  loss  0.166824434675735 correct 50
+Epoch  130  loss  0.15866788919768968 correct 50
+Epoch  140  loss  0.1302862535842229 correct 50
+Epoch  150  loss  0.14090029586399008 correct 50
+Epoch  160  loss  0.031372438544128745 correct 50
+Epoch  170  loss  0.011181479610845386 correct 50
+Epoch  180  loss  0.0836905150093794 correct 50
+Epoch  190  loss  0.003368679372432943 correct 50
+Epoch  200  loss  0.07236112470946808 correct 50
+Epoch  210  loss  0.09845491581591632 correct 50
+Epoch  220  loss  0.007696474295048132 correct 50
+Epoch  230  loss  0.002625519973470659 correct 50
+Epoch  240  loss  0.00013719052421357474 correct 50
+Epoch  250  loss  0.08866804103800664 correct 50
+Epoch  260  loss  0.011851065154907948 correct 50
+Epoch  270  loss  0.02714302386409289 correct 50
+Epoch  280  loss  0.0019449737131134854 correct 50
+Epoch  290  loss  0.004878948073740699 correct 50
+Epoch  300  loss  0.0029344720627059928 correct 50
+Epoch  310  loss  0.00848951363435851 correct 50
+Epoch  320  loss  0.005746418394172495 correct 50
+Epoch  330  loss  0.017057183727142575 correct 50
+Epoch  340  loss  0.06893966855949192 correct 50
+Epoch  350  loss  0.025671661695330562 correct 50
+Epoch  360  loss  0.006529200928493615 correct 50
+Epoch  370  loss  0.003447806980522418 correct 50
+Epoch  380  loss  0.004381496256324896 correct 50
+Epoch  390  loss  0.00124052448231311 correct 50
+Epoch  400  loss  0.038602954995186636 correct 50
+Epoch  410  loss  0.07225662275149672 correct 50
+Epoch  420  loss  3.0112540857708322e-06 correct 50
+Epoch  430  loss  0.008976667018654697 correct 50
+Epoch  440  loss  0.05975644985256773 correct 50
+Epoch  450  loss  0.005819504067015088 correct 50
+Epoch  460  loss  0.05005716148101174 correct 50
+Epoch  470  loss  0.01649317696522713 correct 50
+Epoch  480  loss  0.06512389297820827 correct 50
+Epoch  490  loss  0.06089542743193416 correct 50
+Average epoch time: 1.7684s
+```
+
