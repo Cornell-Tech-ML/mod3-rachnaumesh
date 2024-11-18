@@ -371,11 +371,11 @@ def _sum_practice(out: Storage, a: Storage, size: int) -> None:
     if i < size:
         cache[pos] = a[i]
     else:
-        cache[pos] = numba.float64(0.0)
+        cache[pos] = 0.0
     cuda.syncthreads()
 
     s = BLOCK_DIM // 2
-    while s > 0:
+    while s >= 1:
         if pos < s:
             cache[pos] += cache[pos + s]
         cuda.syncthreads()
@@ -579,6 +579,10 @@ def _tensor_matrix_multiply(
     Returns:
         None : Fills in `out`
     """
+    # Ensure inner dimensions match for matrix multiplication
+    if a_shape[-1] != b_shape[-2]:
+        return
+    
     a_batch_stride = a_strides[0] if a_shape[0] > 1 else 0
     b_batch_stride = b_strides[0] if b_shape[0] > 1 else 0
     # Batch dimension - fixed
@@ -602,6 +606,10 @@ def _tensor_matrix_multiply(
     #    b) Copy into shared memory for b matrix
     #    c) Compute the dot produce for position c[i, j]
     # TODO: Implement for Task 3.4.
+
+    # Boundary check for thread
+    if i >= out_shape[-2] or j >= out_shape[-1]:
+        return
 
     # Code for matrix multiplication
     acc = 0.0
@@ -638,22 +646,20 @@ def _tensor_matrix_multiply(
         cuda.syncthreads()
 
         # Compute partial dot product
-        if i < out_shape[-2] and j < out_shape[-1]:
-            for k in range(BLOCK_DIM):
-                if k_block * BLOCK_DIM + k < a_shape[-1]:
-                    acc += a_shared[pi, k] * b_shared[k, pj]
+        for k in range(BLOCK_DIM):
+            if k_block * BLOCK_DIM + k < a_shape[-1]:  # Check tile boundary
+                acc += a_shared[pi, k] * b_shared[k, pj]
 
         # Synchronize before loading next sub-matrix
         cuda.syncthreads()
 
     # Write the result
-    if i < out_shape[-2] and j < out_shape[-1]:
-        out_idx = (
-            batch * out_strides[0]  # batch dimension
-            + i * out_strides[-2]  # row dimension
-            + j * out_strides[-1]  # column dimension
-        )
-        out[out_idx] = acc
+    out_idx = (
+        batch * out_strides[0]  # batch dimension
+        + i * out_strides[-2]  # row dimension
+        + j * out_strides[-1]  # column dimension
+    )
+    out[out_idx] = acc
 
 
 tensor_matrix_multiply = jit(_tensor_matrix_multiply)
