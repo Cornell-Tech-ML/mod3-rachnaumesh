@@ -31,9 +31,9 @@ class Network(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 3.5.
-        x = self.layer1(x).relu()
-        x = self.layer2(x).relu()
-        x = self.layer3(x)
+        h1 = self.layer1.forward(x).relu()
+        h2 = self.layer2.forward(h1).relu()
+        return self.layer3.forward(h2).sigmoid()
         return x
 
 
@@ -65,7 +65,7 @@ class FastTrain:
     def train(self, data, learning_rate, max_epochs=500, log_fn=default_log_fn):
         self.model = Network(self.hidden_layers, self.backend)
         optim = minitorch.SGD(self.model.parameters(), learning_rate)
-        BATCH = 32
+        BATCH = 10
         losses = []
         epoch_times = []
 
