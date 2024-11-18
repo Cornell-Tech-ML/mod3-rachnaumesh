@@ -615,7 +615,7 @@ Epoch  490  loss  0.8274387748728088 correct 50
 Average epoch time: 1.1975s
 ```
 
-# 1. XOR Dataset :
+# 3. XOR Dataset :
 
 ```bash
 PYTHONPATH='/content/$DIR'
