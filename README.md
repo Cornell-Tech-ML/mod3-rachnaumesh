@@ -851,3 +851,36 @@ Epoch  490  loss  0.06089542743193416 correct 50
 Average epoch time: 1.7684s
 ```
 
+## Matrix Multiplication Timing Graph 
+Here is a plot showing the timing for matrix multiplication using different backends and matrix sizes:
+```
+Running size 64
+{'fast': 0.003781398137410482, 'gpu': 0.007433493932088216}
+Running size 128
+{'fast': 0.016177574793497723, 'gpu': 0.015489339828491211}
+Running size 256
+{'fast': 0.09905695915222168, 'gpu': 0.053712050120035805}
+Running size 512
+{'fast': 1.2552100817362468, 'gpu': 0.29942599932352704}
+Running size 1024
+{'fast': 7.830723841985066, 'gpu': 0.9833330313364664}
+
+Timing summary
+Size: 64
+    fast: 0.00378
+    gpu: 0.00743
+Size: 128
+    fast: 0.01618
+    gpu: 0.01549
+Size: 256
+    fast: 0.09906
+    gpu: 0.05371
+Size: 512
+    fast: 1.25521
+    gpu: 0.29943
+Size: 1024
+    fast: 7.83072
+    gpu: 0.98333
+```
+
+![Matrix Multiplication Timing](matrix_multiplication_timing.png)
