@@ -389,6 +389,7 @@ PYTHONPATH='/content/$DIR'
 ```
 
 ## CPU output:
+```
 Epoch  0  loss  6.453734794473642 correct 42
 Epoch  10  loss  1.8045398383349154 correct 50
 Epoch  20  loss  1.8333374431311014 correct 49
@@ -440,8 +441,10 @@ Epoch  470  loss  0.06984232143779881 correct 50
 Epoch  480  loss  0.00041418452922751083 correct 50
 Epoch  490  loss  0.039722226785217814 correct 50
 Average epoch time: 0.1306s
+```
 
 ## GPU output :
+```
 Epoch  0  loss  5.46260130206641 correct 40
 Epoch  10  loss  2.4136447179704685 correct 47
 Epoch  20  loss  1.2037462958252783 correct 48
@@ -493,6 +496,7 @@ Epoch  470  loss  0.4562270316129772 correct 50
 Epoch  480  loss  0.007935689937363585 correct 50
 Epoch  490  loss  0.004599829681376358 correct 50
 Average epoch time: 1.2208s
+```
 
 # 2. Split Dataset :
 
@@ -502,6 +506,7 @@ PYTHONPATH='/content/$DIR'
 ```
 
 ## CPU output:
+```
 Epoch  0  loss  7.490674900984996 correct 31
 Epoch  10  loss  7.101848436430069 correct 40
 Epoch  20  loss  6.536716767206154 correct 35
@@ -553,8 +558,10 @@ Epoch  470  loss  0.3065806654127446 correct 50
 Epoch  480  loss  0.38592302809380613 correct 49
 Epoch  490  loss  0.7739005813177762 correct 50
 Average epoch time: 0.1284s
+```
 
 ## Gpu output:
+```
 Epoch  0  loss  5.6435434153930135 correct 34
 Epoch  10  loss  3.9050184178503113 correct 36
 Epoch  20  loss  6.670290215014271 correct 38
@@ -606,7 +613,7 @@ Epoch  470  loss  1.447825935713918 correct 45
 Epoch  480  loss  0.0478102776805102 correct 48
 Epoch  490  loss  0.8274387748728088 correct 50
 Average epoch time: 1.1975s
-
+```
 
 # 1. XOR Dataset :
 
@@ -616,6 +623,7 @@ PYTHONPATH='/content/$DIR'
 ```
 
 ## CPU output:
+```
 Epoch  0  loss  8.571475935243257 correct 31
 Epoch  10  loss  5.9621913386159004 correct 26
 Epoch  20  loss  6.32193261998588 correct 40
@@ -667,8 +675,10 @@ Epoch  470  loss  0.881461593265054 correct 49
 Epoch  480  loss  0.865583682647653 correct 48
 Epoch  490  loss  1.3494175304268565 correct 49
 Average epoch time: 0.1255s
+```
 
 ## GPU output:
+```
 Epoch  0  loss  6.982799013700875 correct 42
 Epoch  10  loss  6.0407462959863665 correct 42
 Epoch  20  loss  2.133069331810441 correct 47
@@ -720,6 +730,7 @@ Epoch  470  loss  0.5285055753624606 correct 50
 Epoch  480  loss  0.13673311757846843 correct 50
 Epoch  490  loss  0.1638154917068988 correct 50
 Average epoch time: 1.2029s
+```
 
 # Training logs and Epoch time for Large Model
 
